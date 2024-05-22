@@ -1,0 +1,16 @@
+{
+  "name": "colors-backend",
+  "version": "1.0.0",
+  "description": "Backend that will handle request made from Colors Frontend",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "Mehad Nadeem",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.0"
+  }
+}
