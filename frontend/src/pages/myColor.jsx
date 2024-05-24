@@ -4,11 +4,19 @@ import Create from "../components/createColor";
 import Display from "../components/displayColor";
 import Navbar from "../components/navbar";
 import { useSelector } from "react-redux";
-import DeleteToggle from "../components/deleteToggle";
+import { useAuth } from "../components/auth";
+import { useNavigate } from "react-router-dom";
+import Edit from "../components/editColor";
+import EditModeToggle from "../components/editToggle";
 
-function MyColor() {
+function MyColorAPI() {
   const [colors, setColors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const theme = useSelector((state) => state.theme.value);
+  const enabled = useSelector((state) => state.enabled.value);
+
+  const auth = useAuth();
+  const navigate = useNavigate();
 
   const fetchColors = async () => {
     axios
@@ -30,15 +38,31 @@ function MyColor() {
     }, 100);
   }, []);
 
-  const theme = useSelector((state) => state.theme.value);
+  const handleLogout = () => {
+    auth.logout();
+    navigate("/", { replace: false });
+  };
 
   return (
     <div
-      className={`flex flex-col w-full ${
+      className={`flex flex-col w-full gap-4 ${
         theme === "Dark" ? "bg-black/50 text-white" : "bg-slate-200 text-black"
       }`}
     >
       <Navbar />
+      <div className="flex items-center justify-center gap-4 mb-12">
+        <h1 className="text-4xl font-bold">Welcome {auth.user}</h1>
+        <button
+          onClick={handleLogout}
+          className={`border px-4 py-2 bg-transparent ${
+            theme === "Dark"
+              ? "text-white border-white hover:bg-white hover:text-black"
+              : "text-black border-black hover:bg-black hover:text-white"
+          } rounded-lg transition-colors duration-300 `}
+        >
+          Logout
+        </button>
+      </div>
       <div
         className={`${
           theme === "Dark"
@@ -46,7 +70,8 @@ function MyColor() {
             : "bg-slate-200 text-black"
         }`}
       >
-        <Create setColors={setColors} />
+        {!enabled && <Create setColors={setColors} />}
+        {enabled && <Edit setColors={setColors} />}
       </div>
 
       <div
@@ -62,7 +87,7 @@ function MyColor() {
           </div>
         ) : (
           <>
-            <DeleteToggle />
+            <EditModeToggle />
             <Display colors={colors} setColors={setColors} />
           </>
         )}
@@ -71,4 +96,4 @@ function MyColor() {
   );
 }
 
-export default MyColor;
+export default MyColorAPI;
