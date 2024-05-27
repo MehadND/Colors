@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import Navbar from "../components/navbar";
 
-const Home = () => {
+const HomePage = () => {
   const theme = useSelector((state) => state.theme.value);
 
   return (
@@ -14,7 +14,9 @@ const Home = () => {
             : "bg-slate-200 text-black"
         }`}
       >
-        <h1 className="text-4xl font-bold capitalize">home page</h1>
+        <h1 className="text-4xl font-extrabold tracking-wider capitalize">
+          Welcome
+        </h1>
         <p className="text-lg underline underline-offset-8">
           Project By: Mehad Nadeem
         </p>
@@ -23,4 +25,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;
