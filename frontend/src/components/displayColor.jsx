@@ -1,7 +1,12 @@
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { Copy, XSquare } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { copyToClipboard } from "../redux/features/clipboard/clipboardSlice";
 
 const Display = ({ colors, setColors }) => {
+  const enabled = useSelector((state) => state.enabled.value);
+  const dispatch = useDispatch();
+
   const deleteColor = async (colorID) => {
     axios
       .delete(`http://localhost:5100/api/colors/${colorID}`)
@@ -14,8 +19,6 @@ const Display = ({ colors, setColors }) => {
         console.log(error)
       );
   };
-
-  const enabled = useSelector((state) => state.enabled.value);
 
   return (
     <>
@@ -38,7 +41,22 @@ const Display = ({ colors, setColors }) => {
                   className="absolute -right-2 top-0 w-0 h-0"
                   onClick={() => deleteColor(color.id)}
                 >
-                  ❌
+                  <XSquare />
+                </button>
+                <button
+                  className="absolute -right-2 top-8 w-0 h-0"
+                  // onClick={() => deleteColor(color.id)}
+                  onClick={() =>
+                    dispatch(
+                      copyToClipboard({
+                        idCopy: color.id,
+                        colorCopy: color.color,
+                        hexCopy: color.value,
+                      })
+                    )
+                  }
+                >
+                  <Copy />
                 </button>
               </p>
             );

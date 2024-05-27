@@ -5,6 +5,7 @@ import ShortUniqueId from "short-unique-id";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useSelector } from "react-redux";
+import { ClipboardPaste } from "lucide-react";
 
 const schema = z.object({
   color: z.string().min(1, { message: "Color is required" }),
@@ -23,6 +24,8 @@ const Create = ({ setColors }) => {
   const uid = new ShortUniqueId({ length: 10 });
 
   const theme = useSelector((state) => state.theme.value);
+  const colorInClipboard = useSelector((state) => state.clipboard.colorCopy);
+  const hexInClipboard = useSelector((state) => state.clipboard.hexCopy);
 
   const {
     register,
@@ -73,6 +76,12 @@ const Create = ({ setColors }) => {
       className={`flex flex-col gap-4 m-4 items-center justify-center ml-auto`}
     >
       <div className="flex items-center justify-center gap-2">
+        <ClipboardPaste
+          onClick={() => {
+            setNewColor(colorInClipboard);
+            setNewValue(hexInClipboard);
+          }}
+        />
         <label>New Color</label>
         <input
           type="text"
@@ -149,7 +158,7 @@ const Create = ({ setColors }) => {
             theme === "Dark"
               ? "text-white border-white"
               : "text-black border-black"
-          }  hover:border-red-400 hover:text-red-400 focus:border-red-400 focus:text-red-400`}
+          }  hover:border-red-400 hover:text-red-400 focus:border-red-400 focus:text-red-400 capitalize`}
           onClick={addColor}
         >
           add color

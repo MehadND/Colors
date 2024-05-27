@@ -6,11 +6,17 @@ import {
   setColor,
   setHex,
 } from "../redux/features/color_generator/colorGeneratorSlice";
+import { copyToClipboard } from "../redux/features/clipboard/clipboardSlice";
+import { CircleCheckBig, Copy, Dices } from "lucide-react";
 
-const Generator = () => {
-  const [randomColorList, setRandomColorList] = useState([]);
-  // const [color, setColor] = useState("");
-  // const [hex, setHex] = useState("");
+const RandomColorGenerator = () => {
+  const [randomColorList, setRandomColorList] = useState(null);
+  const theme = useSelector((state) => state.theme.value);
+  const color = useSelector((state) => state.random.color);
+  const hex = useSelector((state) => state.random.hex);
+  const [isCopied, setIsCopied] = useState(false);
+
+  const dispatch = useDispatch();
 
   const fetchAllColors = () => {
     axios
@@ -23,11 +29,10 @@ const Generator = () => {
     fetchAllColors();
   }, []);
 
-  const theme = useSelector((state) => state.theme.value);
-  const color = useSelector((state) => state.random.color);
-  const hex = useSelector((state) => state.random.hex);
-
-  const dispatch = useDispatch();
+  let copy = {
+    colorCopy: color,
+    hexCopy: hex,
+  };
 
   return (
     <>
@@ -42,35 +47,50 @@ const Generator = () => {
         {randomColorList && (
           <div
             style={{ color: `${color}` }}
-            className="text-3xl font-extrabold"
+            className="flex items-center gap-4"
           >
             {color && hex && (
-              <p className="flex gap-4 items-center justify-center">
-                <span>{color}</span>
-                <span>{hex}</span>
-              </p>
+              <>
+                <p className="flex gap-4 items-center justify-center text-3xl font-extrabold ">
+                  <span>{color}</span>
+                  <span>{hex}</span>
+                </p>
+                {!isCopied && (
+                  <Copy
+                    className="cursor-pointer"
+                    onClick={() => {
+                      dispatch(copyToClipboard(copy));
+                      setIsCopied(true);
+                    }}
+                  />
+                )}
+                {isCopied && <CircleCheckBig />}
+              </>
             )}
           </div>
         )}
+
         <button
           onClick={() => {
             let random = Math.floor(Math.random() * randomColorList.length);
             dispatch(setColor(randomColorList[random].name));
             dispatch(setHex(randomColorList[random].hex));
-            // setColor(randomColorList[random].name);
-            // setHex(randomColorList[random].hex);
+            setIsCopied(false);
           }}
-          className={`border px-4 py-2 bg-transparent ${
+          className={`group flex items-center gap-4 border px-4 py-2 bg-transparent ${
             theme === "Dark"
-              ? "text-white border-white hover:bg-white hover:text-black"
-              : "text-black border-black hover:bg-black hover:text-white"
+              ? "text-white border-white "
+              : "text-black border-black "
           } rounded-lg transition-colors duration-300 `}
         >
-          Try Now
+          <span className="transition-all duration-100 scale-100 group-hover:-scale-100">
+            <Dices />
+          </span>
+          <span>Generate</span>
         </button>
       </div>
     </>
   );
 };
 
-export default Generator;
+export default RandomColorGenerator;
